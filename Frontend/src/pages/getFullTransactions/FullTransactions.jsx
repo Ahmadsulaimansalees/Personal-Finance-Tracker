@@ -4,16 +4,19 @@ import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { useEffect } from "react";
-// import toast from "react-hot-toast";
-// import IncomeList from "../../components/Income/IncomeList";
 import { useUserAuth } from "../../hooks/useUserAuth";
 import FullTransactionList from "./FullTransactionList";
+import CustomBiaxialLineChart from "../../components/Charts/customBiaxialLineChart";
+import FullTransactionOverview from "./FullTransactionOverview";
+CustomBiaxialLineChart;
 
 function FullTransactions() {
   useUserAuth();
 
   const [fullTransactionsData, setFullTransactionsData] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [chartData, setChartData] = useState([]);
 
   // AXIOS API Paths
   const fetchFullTransactions = async () => {
@@ -74,19 +77,12 @@ function FullTransactions() {
       <div className="my-5 mx-auto">
         <div className="grid grid-cols-1 gap-6">
           <div className="">
-            {/* <FullTransactionList transactions={fullTransactionsData} /> */}
+            <FullTransactionOverview transactions={fullTransactionsData} />
+            <FullTransactionList
+              transactions={fullTransactionsData}
+              // onDownload="" // something yet to come
+            />
           </div>
-
-          <FullTransactionList
-            transactions={fullTransactionsData}
-            // onDelete={(id) => {
-            //   setOpenDeleteAlert({
-            //     show: true,
-            //     data: id,
-            //   });
-            // }}
-            onDownload="" // something yet to come
-          />
         </div>
       </div>
     </DashboardLayout>

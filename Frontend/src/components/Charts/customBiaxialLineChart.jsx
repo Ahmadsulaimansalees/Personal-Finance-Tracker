@@ -9,56 +9,60 @@ import {
   YAxis,
 } from "recharts";
 import { addThousandSeperator } from "../../utils/helpers";
-import customToolTip from "./customToolTip";
+import CustomBiaxialToolTip from "./CustomBiaxialToolTip";
 
-function customBiaxialLineChart({ data }) {
+function CustomBiaxialLineChart({ data }) {
+  // Ensure data is an array
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <div className="bg-white p-4 text-center">
+        No data available for chart.
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white ">
+    <div className="bg-white">
       <ResponsiveContainer width="100%" height={300}>
+        {/* Use the processed data */}
         <LineChart width={500} height={300} data={data}>
-          <defs>
-            <linearGradient id="incomeGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#87cf5" stopOpacity={0.4} />
-              <stop offset="95%" stopColor="#87cf5" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-
-          <CartesianGrid stroke="none" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#eee" vertical={false} />{" "}
+          {/* Added a subtle grid */}
           <XAxis
-            dataKey="month"
+            dataKey="month" // Use the 'month' key from the processed data
             tick={{ fontSize: 12, fill: "#555" }}
-            stroke="none"
+            // stroke="none" // You might want a subtle axis line
+            axisLine={false} // Hide the axis line if stroke is none
+            tickLine={false} // Hide the tick line
           />
           <YAxis
             tick={{ fontSize: 12, fill: "#555" }}
-            stroke="none"
+            // stroke="none" // You might want a subtle axis line
+            axisLine={false} // Hide the axis line if stroke is none
+            tickLine={false} // Hide the tick line
             tickFormatter={(tick) => `₦${addThousandSeperator(tick)} `}
           />
-          <Tooltip content={customToolTip} />
-
-          {/* <Area
-            type="monotone"
-            dataKey={"amount"}
-            stroke="red"
-            fill="#a11f1f3e"
-            strokeWidth={2}
-            dot={{ r: 4, fill: "red" }}
-          /> */}
+          {/* Use the custom tooltip component */}
+          <Tooltip content={CustomBiaxialToolTip} />
+          {/* Income Line (Green) */}
           <Line
             type="monotone"
-            dataKey="source1"
-            stroke="red"
+            dataKey="totalIncome" // Use the new data key for total income
+            stroke="#4CAF50" // Green color
             strokeWidth={2}
-            dot={{ r: 4, fill: "red" }}
-            activeDot={{ r: 4 }}
+            dot={{ r: 4, fill: "#4CAF50" }}
+            activeDot={{ r: 6 }}
+            name="Income" // Name for the tooltip
           />
+          {/* Expense Line (Red) */}
           <Line
             type="monotone"
-            dataKey="source2"
-            stroke="green"
+            dataKey="totalExpense" // Use the new data key for total expense
+            stroke="#F44336" // Red color
             strokeWidth={2}
-            dot={{ r: 4, fill: "red" }}
-            activeDot={{ r: 4 }}
+            dot={{ r: 4, fill: "#F44336" }}
+            activeDot={{ r: 6 }}
+            name="Expense" // Name for the tooltip
           />
         </LineChart>
       </ResponsiveContainer>
@@ -66,4 +70,4 @@ function customBiaxialLineChart({ data }) {
   );
 }
 
-export default customBiaxialLineChart;
+export default CustomBiaxialLineChart;

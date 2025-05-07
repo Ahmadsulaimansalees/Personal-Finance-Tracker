@@ -1,10 +1,10 @@
 import React from "react";
 import { LuDownload } from "react-icons/lu";
-import TransactionInfoCard from "../../components/Cards/TransactionInfoCard";
 import moment from "moment";
 import { addThousandSeperator, formatMomentDate } from "../../utils/helpers";
+import FullTransactionInfoCard from "../../components/Cards/FullTransactionInfoCard";
 
-function FullTransactionList({ transactions, onDownload, onDelete }) {
+function FullTransactionList({ transactions, onDownload }) {
   const transactionsData = transactions.FULL_INCOME_EXPENSE_TRANSACTIONS;
   return (
     <div className="card">
@@ -15,9 +15,9 @@ function FullTransactionList({ transactions, onDownload, onDelete }) {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2">
+      <div className="grid grid-cols-1 md:grid-cols-1">
         {transactionsData?.map((transactions) => (
-          <TransactionInfoCard
+          <FullTransactionInfoCard
             key={transactions._id}
             title={
               transactions.source ? transactions.source : transactions.category
@@ -26,7 +26,6 @@ function FullTransactionList({ transactions, onDownload, onDelete }) {
             date={moment(transactions.date).format(formatMomentDate)}
             amount={addThousandSeperator(transactions.amount)}
             type={`${transactions.source ? "income" : ""}`}
-            onDelete={() => onDelete(transactions._id)}
           />
         ))}
       </div>
