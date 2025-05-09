@@ -13,6 +13,7 @@
   "license": "ISC",
   "packageManager": "pnpm@10.8.1",
   "dependencies": {
+    "@react-pdf/renderer": "^4.3.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
@@ -20,7 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.14.0",
     "multer": "1.4.5-lts.2",
-    "react-pdf": "^9.2.1",
+    "react": "^19.1.0",
     "xlsx": "^0.18.5"
   }
 }

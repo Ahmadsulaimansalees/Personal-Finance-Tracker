@@ -76,7 +76,7 @@ exports.getDashboardData = async (req, res) => {
       ),
     ].sort((a, b) => b.date - a.date); // sort latest first
 
-    // RETURNING ALL NECESSARY DDATA IN JSON
+    // RETURNING ALL NECESSARY DATA IN JSON FORMAT
 
     res.json({
       totalBalance:
@@ -100,21 +100,3 @@ exports.getDashboardData = async (req, res) => {
     res.status(500).json({ error: "an error occurred", err });
   }
 };
-
-// format the data to be used in chart
-// const incomeChartData = last60DaysIncome.map((item) => ({
-//   date: item._id,
-//   totalIncome: item.totalIncome,
-// }));
-
-// const expenseChartData = last60DaysExpense.map((item) => ({
-//   date: item._id,
-//   totalExpense: item.totalExpense,
-// }));
-
-// res.status(200).json({
-//   totalIncome: totalIncome[0]?.total || 0,
-//   totalExpense: totalExpense[0]?.total || 0,
-//   incomeChartData,
-//   expenseChartData,
-// });

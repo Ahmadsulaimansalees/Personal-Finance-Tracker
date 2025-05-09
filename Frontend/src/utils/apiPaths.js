@@ -29,5 +29,6 @@ export const API_PATHS = {
   FULL: {
     GET_ALL_TRANSACTIONS: "/api/v1/full/get",
     EXPORT_FULL_DATA: "/api/v1/full/download",
+    DOWNLOAD_PDF: `/api/v1/full/download-pdf`,
   },
 };

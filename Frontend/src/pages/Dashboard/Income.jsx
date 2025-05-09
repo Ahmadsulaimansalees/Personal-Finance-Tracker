@@ -1,6 +1,6 @@
 import React from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
-import IncomeOverview from "../../components/income/IncomeOverview";
+import IncomeOverview from "../../components/Income/IncomeOverview";
 import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";

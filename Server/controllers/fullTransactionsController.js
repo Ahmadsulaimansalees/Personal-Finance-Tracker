@@ -47,7 +47,7 @@ exports.getFullTransactions = async (req, res) => {
   }
 };
 
-exports.DownloadFullTransactionsPDF = async (req, res) => {
+exports.DownloadFullTransactions = async (req, res) => {
   try {
     const userId = req.user.id;
     const userObjectId = new Types.ObjectId(String(userId));

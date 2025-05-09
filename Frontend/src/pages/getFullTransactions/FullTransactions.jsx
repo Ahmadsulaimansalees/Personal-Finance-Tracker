@@ -6,9 +6,9 @@ import { API_PATHS } from "../../utils/apiPaths";
 import { useEffect } from "react";
 import { useUserAuth } from "../../hooks/useUserAuth";
 import FullTransactionList from "./FullTransactionList";
-import CustomBiaxialLineChart from "../../components/Charts/customBiaxialLineChart";
 import FullTransactionOverview from "./FullTransactionOverview";
-CustomBiaxialLineChart;
+import { useContext } from "react";
+import { UserContext } from "../../context/userContext";
 
 function FullTransactions() {
   useUserAuth();
@@ -16,7 +16,7 @@ function FullTransactions() {
   const [fullTransactionsData, setFullTransactionsData] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [chartData, setChartData] = useState([]);
+  const userData = useContext(UserContext);
 
   // AXIOS API Paths
   const fetchFullTransactions = async () => {
@@ -39,33 +39,6 @@ function FullTransactions() {
   };
   // HAndle download xlsx
 
-  const handlDownloadPDFData = async () => {
-    // try {
-    //   const response = await axiosInstance.get(
-    //     API_PATHS.INCOME.EXPORT_INCOME_EXCEL,
-    //     {
-    //       responseType: "blob",
-    //     }
-    //   );
-    //   const url = window.URL.createObjectURL(new Blob([response.data]));
-    //   const link = document.createElement("a");
-    //   link.href = url;
-    //   link.setAttribute("download", "income_details.xlsx");
-    //   document.body.appendChild(link);
-    //   link.click();
-    //   link.parentNode.removeChild(link);
-    //   window.URL.revokeObjectURL(url);
-    // } catch (error) {
-    //   console.error(
-    //     "an error occured downloading your income excel sheet",
-    //     error
-    //   );
-    //   toast.error("Failed to download income details, please try again");
-    // } finally {
-    //   toast.success("Income Excel sheet downloaded successfully");
-    // }
-  };
-
   useEffect(() => {
     fetchFullTransactions();
 
@@ -80,7 +53,8 @@ function FullTransactions() {
             <FullTransactionOverview transactions={fullTransactionsData} />
             <FullTransactionList
               transactions={fullTransactionsData}
-              // onDownload="" // something yet to come
+              userData={userData}
+              // onDownload={} // something yet to come
             />
           </div>
         </div>
