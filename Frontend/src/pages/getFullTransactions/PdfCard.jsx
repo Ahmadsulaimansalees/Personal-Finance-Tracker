@@ -5,9 +5,28 @@ import { boldFontBase64, LightFont, SemiBold } from "../../assets/fonts/fonts"; 
 import { addThousandSeperator } from "../../utils/helpers";
 import toast from "react-hot-toast";
 
+/**
+ * Generates a PDF summary of user transactions.
+ * @param {Object} userData - User information.
+ * @param {Object} transactionsData - Transactions data.
+ */
 const generatePdf = ({ userData, transactionsData }) => {
   const transactions = transactionsData.FULL_INCOME_EXPENSE_TRANSACTIONS;
 
+  // Calculate total income and total expense
+  let totalIncome = 0;
+  let totalExpense = 0;
+  transactions.forEach((transaction) => {
+    if (transaction.category) {
+      // Expense
+      totalExpense += Number(transaction.amount) || 0;
+    } else if (transaction.source) {
+      // Income
+      totalIncome += Number(transaction.amount) || 0;
+    }
+  });
+
+  // Initialize jsPDF
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
@@ -20,15 +39,29 @@ const generatePdf = ({ userData, transactionsData }) => {
   doc.addFileToVFS("Candara.ttf", LightFont);
   doc.addFont("Candara.ttf", "LightFont", "normal");
 
-  // Top Section
+  // ===== Top Section =====
 
-  // Set boldest font for the title and center it at the very top
+  // Title
   doc.setFont("BoldFont", "bold");
   doc.setFontSize(22);
   const pageWidth = doc.internal.pageSize.getWidth();
-  doc.text("PERSONAL FINANCE TRACKER", pageWidth / 2, 16, { align: "center" });
+  const titleY = 16;
+  doc.text("PERSONAL FINANCE TRACKER", pageWidth / 2, titleY, {
+    align: "center",
+  });
 
-  // Prepare top info
+  // Underline the title
+  const titleText = "PERSONAL FINANCE TRACKER";
+  const titleFontSize = 22;
+  doc.setFontSize(titleFontSize);
+  const titleWidth = doc.getTextWidth(titleText);
+  const underlineY = titleY + 2.5; // Slightly below the text
+  const underlineStartX = (pageWidth - titleWidth) / 2;
+  const underlineEndX = underlineStartX + titleWidth;
+  doc.setLineWidth(0.7);
+  doc.line(underlineStartX, underlineY, underlineEndX, underlineY);
+
+  // User Info Section
   doc.setFont("LightFont", "normal");
   doc.setFontSize(11);
 
@@ -36,7 +69,7 @@ const generatePdf = ({ userData, transactionsData }) => {
   const rightX = pageWidth - 20;
   const topY = 28; // Y position for all top info
 
-  // Left side: Full Name and User ID
+  // Left side: Full Name, User ID, Email
   doc.text(`Full Name: ${userData.fullName}`, leftX, topY);
   doc.text(`User ID: ${userData._id}`, leftX, topY + 7);
   doc.text(`Email: ${userData.email}`, leftX, topY + 14);
@@ -52,20 +85,20 @@ const generatePdf = ({ userData, transactionsData }) => {
   doc.text(`User Since: ${userSince}`, rightX, topY + 14, { align: "right" });
   doc.text(`Date: ${currentDate}`, rightX, topY + 7, { align: "right" });
 
-  // Middle Belt Section
-  const rectX = 20; // X-coordinate of the rectangle
-  const rectY = 50; // Y-coordinate of the rectangle
-  const rectWidth = 170; // Width of the rectangle
-  const rectHeight = 10; // Height of the rectangle
+  // ===== Middle Belt Section =====
 
-  // Summary card (warmer orange)
+  // Summary card (orange-400)
+  const rectX = 20;
+  const rectY = 50;
+  const rectWidth = 170;
+  const rectHeight = 10;
   doc.setFillColor(251, 146, 60); // orange-400
   doc.roundedRect(rectX, rectY, rectWidth, rectHeight, 2, 2, "F");
 
-  // Add white text "Summary" inside the rectangle
+  // "Summary" label
   doc.setFont("BoldFont", "bold");
-  doc.setFontSize(16); // Increased from 14 to 16
-  doc.setTextColor(255, 255, 255); // White color
+  doc.setFontSize(16);
+  doc.setTextColor(255, 255, 255);
   doc.text("Summary", rectX + rectWidth / 2, rectY + rectHeight / 2 + 2, {
     align: "center",
   });
@@ -74,10 +107,9 @@ const generatePdf = ({ userData, transactionsData }) => {
   const roundedRectX = 20;
   const roundedRectY = 65;
   const roundedRectWidth = 170;
-  const roundedRectHeight = 24; // Increased height
-
+  const roundedRectHeight = 24;
   doc.setDrawColor(220, 220, 220); // Light gray border
-  doc.setFillColor(255, 247, 237); // orange-50, very light and warm
+  doc.setFillColor(255, 247, 237); // orange-50
   doc.roundedRect(
     roundedRectX,
     roundedRectY,
@@ -88,47 +120,55 @@ const generatePdf = ({ userData, transactionsData }) => {
     "FD"
   );
 
-  // Add content inside the rectangle with reduced vertical spacing
+  // Prepare summary data
   const lastTransaction = transactions[transactions.length - 1];
-  // Use the date of the last transaction for the timeframe
   const latestTransactionDate = moment(transactions[0].date);
   const mockData = {
-    totalIncome: "Null",
-    totalExpense: "Null",
+    totalIncome: `NGN ${addThousandSeperator(totalIncome)}`,
+    totalExpense: `NGN ${addThousandSeperator(totalExpense)}`,
     timeframe: `${moment(lastTransaction.date).format(
       "Do MMM YYYY"
     )} - ${moment(latestTransactionDate).format("Do MMM YYYY")}`,
   };
 
+  // Summary content
   doc.setFont("LightFont", "normal");
   doc.setFontSize(11);
-  doc.setTextColor(0, 0, 0); // Black color
+  doc.setTextColor(0, 0, 0);
 
   doc.text("Total Income:", roundedRectX + 5, roundedRectY + 8);
+  doc.setFontSize(10);
+  doc.setTextColor(34, 197, 94); // Green
   doc.text(mockData.totalIncome, roundedRectX + 100, roundedRectY + 8);
 
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
   doc.text("Total Expense:", roundedRectX + 5, roundedRectY + 14);
+  doc.setFontSize(10);
+  doc.setTextColor(239, 68, 68); // Red
   doc.text(mockData.totalExpense, roundedRectX + 100, roundedRectY + 14);
 
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
   doc.text("Timeframe:", roundedRectX + 5, roundedRectY + 20);
   doc.text(mockData.timeframe, roundedRectX + 100, roundedRectY + 20);
 
-  // Amber rectangle for column headers
+  // ===== Table Section =====
+
+  // Table header setup
   const tableX = 20;
-  const tableY = roundedRectY + roundedRectHeight + 5; // Try 5 or even 0
+  const tableY = roundedRectY + roundedRectHeight + 5;
   const tableWidth = 170;
   const tableHeaderHeight = 10;
 
-  // Table header (warmer orange, rounded)
+  // Table header (orange-400, rounded)
   doc.setFillColor(251, 146, 60); // orange-400
   doc.roundedRect(tableX, tableY, tableWidth, tableHeaderHeight, 2, 2, "F");
 
-  // Set header text style
+  // Table header text
   doc.setFont("BoldFont", "bold");
   doc.setFontSize(11);
-  doc.setTextColor(255, 255, 255); // White
-
-  // Draw headers (adjust X positions as needed)
+  doc.setTextColor(255, 255, 255);
   doc.text("Date", tableX + 5, tableY + 7);
   doc.text("Description", tableX + 45, tableY + 7);
   doc.text("Type", tableX + 105, tableY + 7);
@@ -136,20 +176,20 @@ const generatePdf = ({ userData, transactionsData }) => {
 
   // Table rows
   const rowHeight = 9;
-  const rowSpacing = 2; // Space between rows
-  let currentY = tableY + tableHeaderHeight + 4; // Adds margin before first row
+  const rowSpacing = 2;
+  let currentY = tableY + tableHeaderHeight + 4; // Margin before first row
 
   const pageHeight = doc.internal.pageSize.getHeight();
-  const bottomMargin = 20; // Space to leave at the bottom
+  const bottomMargin = 20;
 
   transactions.forEach((transaction, idx) => {
     // Add spacing before each row except the first
     if (idx > 0) currentY += rowSpacing;
 
-    // Check if we need a new page before drawing the next row
+    // Page break logic
     if (currentY + rowHeight + bottomMargin > pageHeight) {
       doc.addPage();
-      currentY = 20; // Reset Y position for new page (adjust as needed)
+      currentY = 20;
 
       // Redraw table header on new page
       doc.setFillColor(251, 146, 60); // orange-400
@@ -172,17 +212,17 @@ const generatePdf = ({ userData, transactionsData }) => {
       currentY += tableHeaderHeight;
     }
 
-    // Conditional logic
+    // Row content
     const isCategory = !!transaction.category;
     const description = isCategory
       ? transaction.category
       : transaction.source || "";
     const type = isCategory ? "Expense" : "Income";
     const amount = transaction.amount
-      ? `₦${addThousandSeperator(transaction.amount)}`
+      ? `NGN ${addThousandSeperator(transaction.amount)}`
       : "";
 
-    // Rounded background for each row
+    // Row background
     if (isCategory) {
       doc.setFillColor(230, 230, 230); // Light gray for category rows
     } else {
@@ -190,12 +230,11 @@ const generatePdf = ({ userData, transactionsData }) => {
     }
     doc.roundedRect(tableX, currentY, tableWidth, rowHeight, 2, 2, "F");
 
-    // Set text color for row
+    // Row text
     doc.setFont("LightFont", "normal");
     doc.setFontSize(10);
     doc.setTextColor(0, 0, 0);
 
-    // Draw row text
     doc.text(
       moment(transaction.date).format("Do MMM YYYY") || "",
       tableX + 5,
@@ -208,8 +247,12 @@ const generatePdf = ({ userData, transactionsData }) => {
     currentY += rowHeight;
   });
 
-  // Save the PDF
-  doc.save("transactions_summary.pdf");
+  // Save the PDF and notify user
+  doc.save(
+    `Finance Statement (${moment(lastTransaction.date).format(
+      "Do MMM YYYY"
+    )} - ${moment(latestTransactionDate).format("Do MMM YYYY")}).pdf`
+  );
   toast.success("PDF generated successfully!");
 };
 

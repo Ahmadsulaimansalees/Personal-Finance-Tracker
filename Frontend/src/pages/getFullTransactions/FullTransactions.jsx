@@ -1,13 +1,10 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from "react";
 import DashboardLayout from "../../components/Layouts/DashboardLayout";
-import { useState } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
-import { useEffect } from "react";
 import { useUserAuth } from "../../hooks/useUserAuth";
 import FullTransactionList from "./FullTransactionList";
 import FullTransactionOverview from "./FullTransactionOverview";
-import { useContext } from "react";
 import { UserContext } from "../../context/userContext";
 
 function FullTransactions() {
@@ -18,10 +15,9 @@ function FullTransactions() {
 
   const userData = useContext(UserContext);
 
-  // AXIOS API Paths
+  // Fetch all transactions from API
   const fetchFullTransactions = async () => {
     if (loading) return;
-
     setLoading(true);
 
     try {
@@ -37,11 +33,9 @@ function FullTransactions() {
       setLoading(false);
     }
   };
-  // HAndle download xlsx
 
   useEffect(() => {
     fetchFullTransactions();
-
     return () => {};
   }, []);
 
@@ -49,12 +43,11 @@ function FullTransactions() {
     <DashboardLayout activeMenu="Full">
       <div className="my-5 mx-auto">
         <div className="grid grid-cols-1 gap-6">
-          <div className="">
+          <div>
             <FullTransactionOverview transactions={fullTransactionsData} />
             <FullTransactionList
               transactions={fullTransactionsData}
               userData={userData}
-              // onDownload={} // something yet to come
             />
           </div>
         </div>

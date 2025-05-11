@@ -2,7 +2,6 @@ import React from "react";
 import moment from "moment";
 import { addThousandSeperator, formatMomentDate } from "../../utils/helpers";
 import FullTransactionInfoCard from "../../components/Cards/FullTransactionInfoCard";
-import DownloadPdf from "./PdfCard";
 import PdfDownloadButton from "./PdfDownwloadButton";
 import XlsxDownloadCard from "./XlsxDownloadCard";
 
