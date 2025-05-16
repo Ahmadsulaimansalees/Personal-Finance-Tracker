@@ -1,7 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
-import SideMenu from "./sideMenu";
+import SideMenu from "./SideMenu";
 
 function Navbar({ activeMenu }) {
   const [openSideMenu, setOpenSideMenu] = useState(false);
