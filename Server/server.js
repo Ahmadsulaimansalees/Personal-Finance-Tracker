@@ -13,8 +13,9 @@ const path = require("path");
 require("dotenv").config();
 // Middleware
 app.use(express.json());
+const PORT = process.env.PORT || 5000;
 app.use(express.urlencoded({ extended: true })); // Optional: For parsing URL-encoded data
-
+// CORS
 const allowedOrigin =
   [process.env.ORIGIN_URL, process.env.ORIGIN_URL2] || "http://localhost:5173";
 
