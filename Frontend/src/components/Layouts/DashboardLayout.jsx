@@ -2,7 +2,7 @@ import React from "react";
 import { useContext } from "react";
 import { UserContext } from "../../context/userContext";
 import Navbar from "../Navbar";
-import SideMenu from "../sideMenu";
+import SideMenu from "../SideMenu";
 
 function DashboardLayout({ children, activeMenu }) {
   const { user } = useContext(UserContext);
