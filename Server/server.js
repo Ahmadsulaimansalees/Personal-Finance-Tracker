@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("././config/db");
@@ -17,12 +18,11 @@ app.use(express.urlencoded({ extended: true })); // Optional: For parsing URL-en
 require("dotenv").config();
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.ORIGIN_URL,
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
 // Connect to MongoDB
 connectDB();
 

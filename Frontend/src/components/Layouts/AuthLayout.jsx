@@ -1,6 +1,3 @@
-import React from "react";
-import Login_Card from "../../assets/images/Login_Card.jpg";
-
 function AuthLayout({ children }) {
   return (
     <div className="flex flex-col md:flex-row h-screen">
