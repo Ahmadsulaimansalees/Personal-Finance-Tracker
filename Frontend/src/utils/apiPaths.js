@@ -1,5 +1,5 @@
 export const BASE_URL =
-  import.meta.env.VITE_FRONTEND_URL || "http://localhost:8000";
+  import.meta.env.VITE_BACKEND_URL || "http://localhost:8000";
 
 // Utils/apiPaths.js
 

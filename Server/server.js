@@ -10,15 +10,17 @@ const fullTransactionRoute = require("./routes/fullTransactionRoute");
 const app = express();
 const path = require("path");
 
+require("dotenv").config();
 // Middleware
 app.use(express.json());
 const PORT = process.env.PORT || 5000;
 app.use(express.urlencoded({ extended: true })); // Optional: For parsing URL-encoded data
 
-require("dotenv").config();
+const allowedOrigin = process.env.ORIGIN_URL || "http://localhost:5173";
+
 app.use(
   cors({
-    origin: process.env.ORIGIN_URL,
+    origin: allowedOrigin,
     methods: ["GET", "POST", "DELETE", "PUT"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
