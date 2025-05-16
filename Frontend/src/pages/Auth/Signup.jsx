@@ -80,7 +80,7 @@ function Signup() {
 
         <form onSubmit={handleSignUp}>
           <ProfilePhotoSelector image={profilePic} setImage={setprofilePic} />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-1  md: ">
             <Input
               value={fullName}
               onChange={(e) => setfullName(e.target.value)}
