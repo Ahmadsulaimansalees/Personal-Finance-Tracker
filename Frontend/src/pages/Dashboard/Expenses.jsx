@@ -11,6 +11,7 @@ import ExpenseList from "../../components/Expenses/ExpenseList";
 import AddExpenseForm from "../../components/Expenses/AddExpenseForm";
 import DeleteAlert from "../../components/Income/DeleteAlert";
 import toast from "react-hot-toast";
+import ExpensesXlsxCard from "./ExpensesXlsxCard";
 
 function Expenses() {
   useUserAuth();
@@ -120,8 +121,6 @@ function Expenses() {
         error
       );
       toast.error("Failed to download expense details, please try again");
-    } finally {
-      toast.success("Expense Excel sheet downloaded successfully");
     }
   };
 
@@ -149,8 +148,8 @@ function Expenses() {
                 data: id,
               });
             }}
-            onDownload={handleDownloadExpenseDetails}
           />
+          <ExpensesXlsxCard transactions={expenseData} />
         </div>
         <Modal
           isOpen={openAddExpenseModal}

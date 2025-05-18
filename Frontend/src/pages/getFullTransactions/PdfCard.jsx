@@ -107,7 +107,7 @@ const generatePdf = ({ userData, transactionsData }) => {
   const roundedRectX = 20;
   const roundedRectY = 65;
   const roundedRectWidth = 170;
-  const roundedRectHeight = 24;
+  const roundedRectHeight = 36;
   doc.setDrawColor(220, 220, 220); // Light gray border
   doc.setFillColor(255, 247, 237); // orange-50
   doc.roundedRect(
@@ -123,35 +123,61 @@ const generatePdf = ({ userData, transactionsData }) => {
   // Prepare summary data
   const lastTransaction = transactions[transactions.length - 1];
   const latestTransactionDate = moment(transactions[0].date);
+  const numberOfTransactions = transactions.length;
+  const availableBalance = totalIncome - totalExpense;
   const mockData = {
     totalIncome: `NGN ${addThousandSeperator(totalIncome)}`,
     totalExpense: `NGN ${addThousandSeperator(totalExpense)}`,
+    numberOfTransactions,
+    availableBalance: `NGN ${addThousandSeperator(availableBalance)}`,
     timeframe: `${moment(lastTransaction.date).format(
       "Do MMM YYYY"
     )} - ${moment(latestTransactionDate).format("Do MMM YYYY")}`,
   };
 
-  // Summary content
+  // Summary content (inside the rounded rectangle)
   doc.setFont("LightFont", "normal");
   doc.setFontSize(11);
   doc.setTextColor(0, 0, 0);
 
-  doc.text("Total Income:", roundedRectX + 5, roundedRectY + 8);
+  let summaryY = roundedRectY + 8;
+  const summaryLineSpacing = 6;
+
+  doc.text("Total Income:", roundedRectX + 5, summaryY);
   doc.setFontSize(10);
   doc.setTextColor(34, 197, 94); // Green
-  doc.text(mockData.totalIncome, roundedRectX + 100, roundedRectY + 8);
+  doc.text(mockData.totalIncome, roundedRectX + 100, summaryY);
 
+  summaryY += summaryLineSpacing;
   doc.setFontSize(11);
   doc.setTextColor(0, 0, 0);
-  doc.text("Total Expense:", roundedRectX + 5, roundedRectY + 14);
+  doc.text("Total Expense:", roundedRectX + 5, summaryY);
   doc.setFontSize(10);
   doc.setTextColor(239, 68, 68); // Red
-  doc.text(mockData.totalExpense, roundedRectX + 100, roundedRectY + 14);
+  doc.text(mockData.totalExpense, roundedRectX + 100, summaryY);
 
+  summaryY += summaryLineSpacing;
   doc.setFontSize(11);
   doc.setTextColor(0, 0, 0);
-  doc.text("Timeframe:", roundedRectX + 5, roundedRectY + 20);
-  doc.text(mockData.timeframe, roundedRectX + 100, roundedRectY + 20);
+  doc.text("Number of Transactions:", roundedRectX + 5, summaryY);
+  doc.setFontSize(10);
+  doc.setTextColor(37, 99, 235); // Blue
+  doc.text(String(mockData.numberOfTransactions), roundedRectX + 100, summaryY);
+
+  summaryY += summaryLineSpacing;
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Available Balance:", roundedRectX + 5, summaryY);
+  // Change color from teal/green to deep orange
+  doc.setFontSize(11);
+  doc.setTextColor(251, 146, 60); // orange-400
+  doc.text(mockData.availableBalance, roundedRectX + 100, summaryY);
+
+  summaryY += summaryLineSpacing;
+  doc.setFontSize(11);
+  doc.setTextColor(0, 0, 0);
+  doc.text("Timeframe:", roundedRectX + 5, summaryY);
+  doc.text(mockData.timeframe, roundedRectX + 100, summaryY);
 
   // ===== Table Section =====
 
@@ -246,6 +272,27 @@ const generatePdf = ({ userData, transactionsData }) => {
 
     currentY += rowHeight;
   });
+
+  // After all table rows and before saving the PDF
+  // Move to a new page if needed to ensure the signature is at the bottom
+  const finalPageHeight = doc.internal.pageSize.getHeight();
+  const signatureY = finalPageHeight - 18;
+
+  // Optionally, add a new page if the currentY is too close to the bottom
+  if (currentY + 20 > finalPageHeight) {
+    doc.addPage();
+  }
+
+  // Signature/footer text
+  doc.setFont("BoldFont", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(120, 120, 120);
+  doc.text(
+    "Signed, Copyright ©2025  A™ Finance Tracker.",
+    doc.internal.pageSize.getWidth() / 2,
+    finalPageHeight - 12,
+    { align: "center" }
+  );
 
   // Save the PDF and notify user
   doc.save(
