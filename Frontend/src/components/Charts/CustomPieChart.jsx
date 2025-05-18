@@ -37,8 +37,8 @@ function CustomPieChart({ data, label, totalAmount, colors, showTextAnchor }) {
   };
 
   return (
-    <div style={{ width: 400, height: 400 }}>
-      <PieChart width={400} height={400}>
+    <div className="flex flex-col items-center justify-center w-full h-full">
+      <PieChart width={300} height={400}>
         <Pie
           dataKey="amount"
           data={data}

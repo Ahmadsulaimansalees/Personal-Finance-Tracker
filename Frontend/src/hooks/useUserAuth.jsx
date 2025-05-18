@@ -4,12 +4,30 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
 
+function isTokenExpired(token) {
+  if (!token) return true;
+  try {
+    const [, payload] = token.split(".");
+    const { exp } = JSON.parse(atob(payload));
+    return Date.now() >= exp * 1000;
+  } catch {
+    return true;
+  }
+}
+
 export const useUserAuth = () => {
   const { user, updateUser, clearUser } = useContext(UserContext);
-
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Always check token on mount
+    const token = localStorage.getItem("token");
+    if (!token || isTokenExpired(token)) {
+      clearUser();
+      navigate("/login");
+      return;
+    }
+
     if (user) return;
 
     let isMounted = true;
@@ -34,5 +52,5 @@ export const useUserAuth = () => {
     return () => {
       isMounted = false;
     };
-  }, [updateUser, clearUser, navigate]);
+  }, [user, updateUser, clearUser, navigate]);
 };
