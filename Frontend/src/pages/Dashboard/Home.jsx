@@ -97,7 +97,7 @@ function Home() {
 
           <RecentIncomeWithChart
             data={
-              dashboardData?.last30daysIncome.transactions.slice(0, 4) || []
+              dashboardData?.last30daysIncome.transactions.slice(0, 5) || []
             }
             totalIncome={dashboardData?.totalIncome}
           />

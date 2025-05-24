@@ -37,11 +37,11 @@ function ProfilePhotoSelector({ image, setImage }) {
       />
 
       {!image ? (
-        <div className="w-20 h-20 flex items-center justify-center bg-teal-100 rounded-full relative">
-          <LuUser className="text-4xl text-teal-500" />
+        <div className="w-20 h-20 flex items-center justify-center bg-indigo-100 rounded-full relative">
+          <LuUser className="text-4xl text-indigo-500" />
           <button
             type="button"
-            className="w-8 h-8 items-center text-center justify-center bg-teal-500 text-white rounded-full absolute -bottom-1 -right-1
+            className="w-8 h-8 items-center text-center justify-center bg-indigo-500 text-white rounded-full absolute -bottom-1 -right-1
           "
             onClick={onChooseFile}
           >

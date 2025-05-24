@@ -1,12 +1,13 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FiLogIn } from "react-icons/fi";
+import { FiLogIn } from "react-icons/fi"; // Consider changing this icon if you prefer
 import Input from "../../components/Input";
 import { validateEmail } from "../../utils/helpers";
 import axiosInstance from "../../utils/axiosInstance";
 import { API_PATHS } from "../../utils/apiPaths";
 import { UserContext } from "../../context/userContext";
 import AnimatedBackground from "../../components/AnimatedBackground";
+import gsap from "gsap";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -15,6 +16,15 @@ function Login() {
 
   const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    gsap.fromTo(
+      formRef.current,
+      { opacity: 0, y: 50, scale: 0.95 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" }
+    );
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -44,60 +54,76 @@ function Login() {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-blue-50 via-purple-50 to-orange-50 overflow-hidden">
+    <div className="fixed inset-0 flex items-center justify-center overflow-hidden p-4">
+      {" "}
+      {/* Added padding for small screens */}
       <AnimatedBackground />
-      <div className="w-full max-w-md mx-auto px-3 py-6 sm:p-6 rounded-2xl shadow-2xl bg-white/70 backdrop-blur-md border border-white/40 flex flex-col items-center">
-        <div className="flex items-center gap-2 mb-3">
-          <FiLogIn className="text-2xl text-teal-500" />
-          <h3 className="text-xl sm:text-2xl font-bold text-gray-800">
-            Welcome Back
+      <div
+        ref={formRef}
+        className="relative z-10 w-full max-w-sm mx-auto p-8 rounded-3xl shadow-xl bg-white/80 backdrop-blur-md border border-white/60 flex flex-col items-center
+                   transform transition-all duration-300 ease-in-out hover:shadow-2xl hover:scale-[1.01]" // Enhanced card styles
+      >
+        <div className="flex items-center gap-3 mb-4">
+          {" "}
+          {/* Increased gap and margin */}
+          <FiLogIn className="text-3xl text-indigo-500" />{" "}
+          {/* Changed icon color and size */}
+          <h3 className="text-2xl font-extrabold text-gray-800 tracking-tight">
+            {" "}
+            {/* Stronger heading */}
+            Sign In
           </h3>
         </div>
-        <p className="text-xs sm:text-sm text-gray-600 mb-4 text-center">
-          Please enter your details to login
+        <p className="text-sm text-gray-600 mb-6 text-center">
+          Access your personalized dashboard
         </p>
-        <form onSubmit={handleLogin} className="w-full flex flex-col gap-2">
-          <label
-            className="text-xs text-gray-700 font-medium mb-1"
-            htmlFor="login-email"
-          >
-            Email Address
-          </label>
-          <Input
-            id="login-email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="John@example.com"
-            type="text"
-            className="mb-1 "
-          />
-          <label
-            className="text-xs text-gray-700 font-medium mb-1"
-            htmlFor="login-password"
-          >
-            Password
-          </label>
-          <Input
-            id="login-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Minimum 8 characters"
-            type="password"
-            className="mb-1"
-          />
-          {error && <p className="text-red-500 text-xs pb-1">{error}</p>}
+        <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
+          {" "}
+          {/* Increased gap */}
+          <div>
+            <label
+              className="text-xs text-gray-700 font-semibold mb-1 block" // Block for better spacing
+              htmlFor="login-email"
+            >
+              Email Address
+            </label>
+            <Input
+              id="login-email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com" // Updated placeholder
+              type="email" // Changed to type="email" for better validation
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200" // Refined input styles
+            />
+          </div>
+          <div>
+            <label
+              className="text-xs text-gray-700 font-semibold mb-1 block"
+              htmlFor="login-password"
+            >
+              Password
+            </label>
+            <Input
+              id="login-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••" // Modern password placeholder
+              type="password"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200"
+            />
+          </div>
+          {error && <p className="text-red-500 text-xs text-center">{error}</p>}
           <button
             type="submit"
-            className="w-full py-2 rounded-xl bg-gradient-to-r from-teal-400 to-blue-400 text-white font-semibold shadow hover:from-teal-500 hover:to-blue-500 transition text-sm mt-2"
+            className="w-full py-3 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold shadow-md hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 ease-in-out text-base mt-4
+                       transform hover:scale-105 active:scale-98 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" // Refined button styles
           >
             Login
           </button>
         </form>
-        <p className="text-xs font-extralight text-gray-800 mt-5">
-          Don't have an account?
-        </p>
+        <p className="text-xs text-gray-600 mt-6">Don't have an account?</p>
         <Link
-          className="text-teal-600 underline hover:text-blue-500 text-xs"
+          className="text-indigo-600 hover:text-purple-700 font-medium text-sm transition-colors duration-200" // Refined link styles
           to={"/signup"}
         >
           Sign Up
